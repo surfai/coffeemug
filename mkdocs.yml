@@ -1,0 +1,58 @@
+site_name: Taiphi Demo
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: yes
+            heading_level: 0
+            filters:
+              - '!^_'  # Exclude private members
+              - '!^__init__$'  # Exclude __init__ methods
+
+nav:
+  - Home: index.md
+  - Main: main.md
+  - QueryExtractNode: queryextractnode.md
+  - GenerateInstruct: generateinstruct.md
+  - CallTaiphi: calltaiphi.md
+
+theme:
+  name: material
+  font:
+    text: Merriweather Sans
+    code: Red Hat Mono
+
+  palette:
+    # Dark Mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Dark mode
+      primary: green
+      accent: deep purple
+
+    # Light Mode
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Light mode
+      primary: blue
+      accent: deep orange
+
+extra:
+  generator: false
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+
+

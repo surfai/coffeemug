@@ -1,0 +1,4 @@
+## GenerateInstruct
+
+::: taiphi.generateinstruct
+
