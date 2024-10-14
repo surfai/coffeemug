@@ -20,6 +20,7 @@ nav:
   - QueryExtract: queryextract.md
   - GenerateInstruct: generateinstruct.md
   - CallTaiphi: calltaiphi.md
+  - StateMachine: statemachine.md
 
 theme:
   name: material

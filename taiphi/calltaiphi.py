@@ -1,4 +1,4 @@
-from langgraph.graph import AgentState
+from statemachine import AgentState
 
 def CallTaiphi(state: AgentState) -> AgentState:
     """
