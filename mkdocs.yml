@@ -17,7 +17,7 @@ plugins:
 nav:
   - Home: index.md
   - Main: main.md
-  - QueryExtractNode: queryextractnode.md
+  - QueryExtract: queryextract.md
   - GenerateInstruct: generateinstruct.md
   - CallTaiphi: calltaiphi.md
 
@@ -53,6 +53,7 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+
 
 
 

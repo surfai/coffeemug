@@ -1,21 +1,38 @@
-def CallTaiphi(input_2: str) -> str:
-    """
-    Appends " to CallTaiphi" to the input string.
+from langgraph.graph import AgentState
 
-    This function takes an input string and appends the phrase " to CallTaiphi" to it.
-    It can be used to modify strings in a specific way, possibly for formatting or
-    creating specific messages.
+def CallTaiphi(state: AgentState) -> AgentState:
+    """
+    Call the Taiphi service and update the agent state with the results.
+
+    This function is responsible for interacting with the Taiphi service,
+    which is presumably an external AI or data processing system. It takes
+    the current state of the agent, sends a request to Taiphi, and updates
+    the state with the response.
 
     Args:
-        input_2 (str): The input string to be modified.
+        state (AgentState): The current state of the agent. This object
+            contains all the necessary information about the ongoing
+            conversation and processing steps.
 
     Returns:
-        str: The modified string with " to CallTaiphi" appended.
+        AgentState: The updated state after calling Taiphi. This includes:
+            - A new message indicating that CallTaiphi was executed.
+            - A placeholder message for adding user query information.
 
-    Examples:
-        >>> CallTaiphi("Hello")
-        'Hello to CallTaiphi'
-        >>> CallTaiphi("Welcome")
-        'Welcome to CallTaiphi'
+    Note:
+        This function currently adds placeholder messages to the state.
+        In a full implementation, it would likely:
+        1. Extract relevant information from the state to form a query.
+        2. Send this query to the Taiphi service.
+        3. Process the response from Taiphi.
+        4. Update the state with the processed information.
+
+    TODO:
+        - Implement actual connection to Taiphi service.
+        - Add error handling for network issues or service unavailability.
+        - Include more detailed state updates based on Taiphi's response.
     """
-    return input_2 + " to CallTaiphi"
+    state["messages"].append(CallTaiphi.__name__)
+    state["messages"].append("add user+query")
+    return state
+

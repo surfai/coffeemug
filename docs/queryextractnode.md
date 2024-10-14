@@ -1,4 +1,0 @@
-## QueryExtractNode
-
-::: taiphi.queryextractnode
-

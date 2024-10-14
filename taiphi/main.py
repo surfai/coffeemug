@@ -1,89 +1,70 @@
-from langgraph.graph import Graph
-from queryextractnode import QueryExtractNode
+"""
+This module defines the main structure and flow of the Taiphi agent system.
+
+It sets up a state graph using langgraph, defining the nodes and edges
+for the agent's workflow. The graph includes steps for query extraction,
+calling Taiphi, and generating instructions.
+"""
+
+from langgraph.graph import Graph, StateGraph
+from queryextract import QueryExtract
 from calltaiphi import CallTaiphi
 from generateinstruct import GenerateInstruct
+from typing import TypedDict, Annotated, Sequence
+import operator
 import os
-from IPython.display import Image, display
+from IPython.display import Image
+from state import AgentState
 
+class AgentState(TypedDict):
+    """
+    Represents the state of the agent throughout its execution.
 
-"""
-This script defines and executes a Langchain graph workflow for processing user queries.
+    This TypedDict defines the structure of the agent's state, including
+    various fields that are updated and accessed during the agent's operation.
 
-The workflow consists of three main components:
-1. QueryExtractNode: Extracts and processes the initial user query.
-2. CallTaiphi: Interacts with the Taiphi system based on the extracted query.
-3. GenerateInstruct: Generates instructions or responses based on Taiphi's output.
+    Attributes:
+        messages (Sequence[str]): A list of messages in the conversation.
+        summary (Sequence[str]): A list of summaries generated during the process.
+        instruction (Sequence[str]): A list of instructions for the agent.
+        taipi_body (Sequence[str]): The body of the Taiphi response.
+        user_raw_query (Sequence[str]): The original, unprocessed user query.
+        user_refined_query (Sequence[str]): The processed and refined user query.
+        parameters_to_taiphi (Sequence[str]): Parameters to be passed to Taiphi.
 
-The script demonstrates how to set up the graph, compile it into an executable app,
-and run it with both single invocation and streaming modes.
-"""
+    Note:
+        All attributes are annotated with `operator.add`, indicating that
+        they can be concatenated or added together when updating the state.
+    """
+    messages: Annotated[Sequence[str], operator.add]
+    summary: Annotated[Sequence[str], operator.add]
+    instruction: Annotated[Sequence[str], operator.add]
+    taipi_body: Annotated[Sequence[str], operator.add]
+    user_raw_query: Annotated[Sequence[str], operator.add]
+    user_refined_query: Annotated[Sequence[str], operator.add]
+    parameters_to_taiphi: Annotated[Sequence[str], operator.add]
 
-# Define a Langchain graph
-workflow = Graph()
+# Create a StateGraph instance with AgentState
+stateclassgraph = StateGraph(AgentState)
 
-"""
-Define and configure the Langchain graph workflow.
+# Add nodes to the graph
+stateclassgraph.add_node("QueryExtract", QueryExtract)
+stateclassgraph.add_node("CallTaiphi", CallTaiphi)
+stateclassgraph.add_node("GenerateInstruct", GenerateInstruct)
 
-This workflow consists of three nodes:
-- QueryExtractNode: Processes the initial user query
-- CallTaiphi: Interacts with the Taiphi system
-- GenerateInstruct: Generates final instructions or responses
+# Define edges between nodes
+stateclassgraph.add_edge("QueryExtract", "CallTaiphi")
+stateclassgraph.add_edge("CallTaiphi", "GenerateInstruct")
 
-The workflow is set up as a linear sequence from QueryExtractNode to CallTaiphi to GenerateInstruct.
-"""
+# Set the entry and finish points of the graph
+stateclassgraph.set_entry_point("QueryExtract")
+stateclassgraph.set_finish_point("StateFunction2")
 
-workflow.add_node("QueryExtractNode", QueryExtractNode)
-workflow.add_node("CallTaiphi", CallTaiphi)
-workflow.add_node("GenerateInstruct", GenerateInstruct)
-
-workflow.add_edge('QueryExtractNode', 'CallTaiphi')
-workflow.add_edge('CallTaiphi', 'GenerateInstruct')
-
-workflow.set_entry_point("QueryExtractNode")
-workflow.set_finish_point("GenerateInstruct")
-
-
-app = workflow.compile()
-
-"""
-Demonstrate the usage of the compiled Langchain graph.
-
-This section shows how to invoke the workflow with a sample input using the invoke() method.
-It processes the input through all nodes in the graph and returns the final output.
-"""
-
-# Create the /img folder if it doesn't exist
-os.makedirs("img", exist_ok=True)
-
-# Generate and save the graph as an image
-try:
-    image_path = os.path.join("img", "workflow_graph.png")
-    workflow.get_graph().draw_png(image_path)
-    print(f"Graph image saved to: {image_path}")
-    
-    # Optionally, you can still display the image if you're in a Jupyter notebook
-    # display(Image(image_path))
-except Exception as e:
-    print("Error generating or saving the graph image:", e)
-
-# Example of invoking the compiled workflow
-#result = app.invoke('I am moving from')
-#print("Invoke result:", result)
+# Compile the graph into an executable application
+stateclassgraph_app = stateclassgraph.compile()
 
 """
-Stream the workflow execution and print the output from each node.
-
-This section demonstrates how to use the stream() method to process the input
-and display the intermediate results from each node in the workflow. This is useful
-for understanding the step-by-step processing of the input through the graph.
+The `stateclassgraph_app` is the compiled version of the state graph,
+ready to be executed. It represents the full workflow of the Taiphi agent,
+from query extraction to instruction generation.
 """
-
-# Streaming example
-input = 'Starting'
-for output in app.stream(input):
-    # stream() yields dictionaries with output keyed by node name
-    for key, value in output.items():
-        print(f"Output from node '{key}':")
-        print("---")
-        print(value)
-    print("\n---\n")
