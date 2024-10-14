@@ -42,7 +42,7 @@ inputs = {
     "refined_query": ["add refined+query"],
     "taiphi_response": ["add taiphi+response"],
     "summary": ["add summary"],
-  #  "instruction": ["add instruction"],
+    "instruction": ["add instruction"],
     "final_response": ["add final+response"]
     }
 

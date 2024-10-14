@@ -28,3 +28,4 @@ class AgentState(TypedDict):
     user_raw_query: Annotated[Sequence[str], operator.add]
     user_refined_query: Annotated[Sequence[str], operator.add]
     parameters_to_taiphi: Annotated[Sequence[str], operator.add]
+    
